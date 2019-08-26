@@ -4,7 +4,7 @@ import csv
 
 FILE = 'council_reports.csv'
 NUM_DOCS = 10
-SEARCH_ENGINE = 'temp-council-5'
+SEARCH_ENGINE = 'temp-council-6'
 
 def main():
     print('Setting up connection')
@@ -30,7 +30,7 @@ def main():
                 docs.append(dict(zip(columns, line)))
                 responses = client.index_documents(SEARCH_ENGINE, docs)
                 for response in responses:
-                    if 'errors' in response:
+                    if 'errors' in response and len(response.get('errors')) > 0:
                         print(response.get('errors'))
                         return
                 docs = []
