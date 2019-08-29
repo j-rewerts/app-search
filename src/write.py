@@ -2,9 +2,9 @@ from swiftype_app_search import Client
 import time
 import csv
 
-FILE = 'council_meta_sample.csv'
+FILE = 'council_reports.csv'
 NUM_DOCS = 10
-SEARCH_ENGINE = 'temp-council-5'
+SEARCH_ENGINE = 'temp-council-6'
 
 def main():
     print('Setting up connection')
@@ -16,7 +16,7 @@ def main():
     print('connection established')
 
     docs = []
-    with open(FILE, 'r') as file_std:
+    with open(FILE, 'r', encoding='utf-8-sig') as file_std:
         csv_reader = csv.reader(file_std, delimiter=',')
         row_num = 0
 
@@ -28,7 +28,11 @@ def main():
             elif row_num % NUM_DOCS == 0:
                 print('Indexing documents {} through {}'.format(row_num-NUM_DOCS, row_num))
                 docs.append(dict(zip(columns, line)))
-                client.index_documents(SEARCH_ENGINE, docs)
+                responses = client.index_documents(SEARCH_ENGINE, docs)
+                for response in responses:
+                    if 'errors' in response and len(response.get('errors')) > 0:
+                        print(response.get('errors'))
+                        return
                 docs = []
             else:
                 docs.append(dict(zip(columns, line)))
