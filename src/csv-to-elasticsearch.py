@@ -24,7 +24,7 @@ from csv import reader
 
 
 help = """
-This python utility helps with uploading CSV files of any size to Elasticsearch. This has been tested up to ~2GB. Currently, all fields in the document are indexed and treated as text. In the future, controlling how to fields are indexed from the command line would be a handy feature.
+This python utility helps with uploading CSV files of any size to Elasticsearch. This has been tested up to ~2GB. Currently, all fields in the document are indexed and treated as text. In the future, controlling how the fields are indexed from the command line would be a handy feature.
 
 Required fields
 -i (--index) The index to write documents to.
