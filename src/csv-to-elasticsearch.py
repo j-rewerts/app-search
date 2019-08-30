@@ -67,15 +67,17 @@ def parse_hosts(hosts):
     Ex. localhost:9200,localhost:9201,localhost:9202
 
     :param str hosts The hosts string.
-    :return dict An Elasticsearch dictionary of hosts.
+    :return List An Elasticsearch list of hosts.
     """
     hosts = hosts.split(',')
-    host_dict = {}
+    hosts_list = []
     for host in hosts:
         host = host.split(':')
+        host_dict = {}
         host_dict['host'] = host[0]
         host_dict['port'] = host[1]
-    return host_dict
+        hosts_list.append(host_dict)
+    return hosts_list
 
 
 def parse_args(args):
@@ -131,12 +133,8 @@ def parse_args(args):
 
 
 def main(index, hosts, csv_file, user, password):
-    index = 'council_reports_3'
-    es = Elasticsearch([
-        {'host': '192.168.1.72', 'port': 9200},
-        {'host': '192.168.1.72', 'port': 9201},
-        {'host': '192.168.1.72', 'port': 9202}
-    ])
+    hosts = parse_hosts(hosts)
+    es = Elasticsearch(hosts)
     create_index(es, index)
 
     for ok, result in streaming_bulk(es, parse_reports('council_meta.txt'), index=index):
