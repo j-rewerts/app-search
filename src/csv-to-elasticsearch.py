@@ -137,12 +137,12 @@ def main(index, hosts, csv_file, user, password):
     es = Elasticsearch(hosts)
     create_index(es, index)
 
-    for ok, result in streaming_bulk(es, parse_reports('council_meta.txt'), index=index):
+    for ok, result in streaming_bulk(es, parse_reports(csv_file), index=index):
         action, result = result.popitem()
         doc_id = '/%s/doc/%s' % (index, result['_id'])
 
         if not ok:
-            print("Failed to %s document %s: %r" % (action, doc_id, result))
+            print('Failed to %s document %s: %r' % (action, doc_id, result))
         else:
             print(doc_id)
 
