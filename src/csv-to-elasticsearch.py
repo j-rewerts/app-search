@@ -93,6 +93,7 @@ def parse_args(args):
         'user=',
         'password='
     ]
+    index, hosts, csv_file, user, password = None, None, None, None, None
     try:
         opts, args = getopt.getopt(args, short_opts, long_opts)
     except getopt.GetoptError:
