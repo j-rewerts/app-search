@@ -3,8 +3,8 @@ from elasticsearch.helpers import streaming_bulk
 import time
 import getopt
 import sys
-from csv import reader
-
+import csv
+csv.field_size_limit(sys.maxsize)
 
 # Creating a tokenizer
 # 'analysis': {
@@ -26,6 +26,12 @@ from csv import reader
 help = """
 This python utility helps with uploading CSV files of any size to Elasticsearch. This has been tested up to ~2GB. Currently, all fields in the document are indexed and treated as text. In the future, controlling how the fields are indexed from the command line would be a handy feature.
 
+Example on localhost
+python csv-to-elasticsearch.py -i my-index -c localhost:9200,localhost:9201 -f my.csv
+
+Example over https
+python csv-to-elasticsearch.py -i my-index -c https://sub.domain.ca/es -f my.csv
+
 Required fields
 -i (--index) The index to write documents to.
 -c (--connect) The Elasticsearch host string.
@@ -41,7 +47,7 @@ Optional fields
 
 def parse_reports(file):
     with open(file, 'r') as file_std:
-        csv_reader = reader(file_std)
+        csv_reader = csv.reader(file_std)
 
         for values in csv_reader:
             if csv_reader.line_num == 1:
@@ -69,15 +75,7 @@ def parse_hosts(hosts):
     :param str hosts The hosts string.
     :return List An Elasticsearch list of hosts.
     """
-    hosts = hosts.split(',')
-    hosts_list = []
-    for host in hosts:
-        host = host.split(':')
-        host_dict = {}
-        host_dict['host'] = host[0]
-        host_dict['port'] = host[1]
-        hosts_list.append(host_dict)
-    return hosts_list
+    return hosts.split(',')
 
 
 def parse_args(args):
@@ -142,7 +140,7 @@ def main(index, hosts, csv_file, user, password):
         es = Elasticsearch(hosts)
     create_index(es, index)
 
-    for ok, result in streaming_bulk(es, parse_reports(csv_file), index=index):
+    for ok, result in streaming_bulk(es, parse_reports(csv_file), index=index, max_retries=5):
         action, result = result.popitem()
         doc_id = '/%s/doc/%s' % (index, result['_id'])
 
