@@ -100,7 +100,7 @@ def parse_args(args):
         print(help)
         sys.exit(2)
 
-    for opt, arg in args:
+    for opt, arg in opts:
         if opt == '-h':
             print(help)
             sys.exit()
@@ -135,7 +135,11 @@ def parse_args(args):
 
 def main(index, hosts, csv_file, user, password):
     hosts = parse_hosts(hosts)
-    es = Elasticsearch(hosts)
+    es = None
+    if user and password:
+        es = Elasticsearch(hosts, http_auth=(user, password))
+    else:
+        es = Elasticsearch(hosts)
     create_index(es, index)
 
     for ok, result in streaming_bulk(es, parse_reports(csv_file), index=index):
