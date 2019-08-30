@@ -20,6 +20,7 @@ from csv import reader
 #     }
 # }
 
+
 def parse_reports(file):
     with open(file, 'r') as file_std:
         csv_reader = reader(file_std)
@@ -42,7 +43,24 @@ def create_index(client, index):
             raise
 
 
-def main():
+def parse_hosts(hosts):
+    """
+    Parses a comma delimited string of hosts.
+    Ex. localhost:9200,localhost:9201,localhost:9202
+
+    :param str hosts The hosts string.
+    :return dict An Elasticsearch dictionary of hosts.
+    """
+    hosts = hosts.split(',')
+    host_dict = {}
+    for host in hosts:
+        host = host.split(':')
+        host_dict['host'] = host[0]
+        host_dict['port'] = host[1]
+    return host_dict
+
+
+def main(index='my_index', hosts='localhost:9200', file, user, password):
     index = 'council_reports_3'
     es = Elasticsearch([
         {'host': '192.168.1.72', 'port': 9200},
@@ -63,6 +81,6 @@ def main():
 
 if __name__ == '__main__':
     start = time.perf_counter()
-    main()
+    main(index, hosts, file, user, password)
     elapsed = time.perf_counter() - start
     print(f'Program completed in {elapsed:0.5f} seconds.')
