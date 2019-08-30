@@ -1,0 +1,41 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  # From this issue: https://github.com/elastic/cloud-on-k8s/issues/1010#issuecomment-499795679
+  name: ingress-es-kibana
+  namespace: textsearch
+  annotations:
+    # Use the nginx ingress controller, not the cloud-provider default one
+    kubernetes.io/ingress.class: "nginx"
+
+    # Rewrite routes: eg. "/elasticsearch/_cat/nodes" to "/_cat/nodes"
+    nginx.ingress.kubernetes.io/rewrite-target: "/$1"
+
+    # If the ES cluster is already configured to use TLS,
+    # use https to reach the cluster.
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+
+    # Restrict access to a range of IP addresses
+    # nginx.ingress.kubernetes.io/whitelist-source-range: 10.0.0.0/24,35.26.87.5
+
+spec:
+  rules:
+  - host: textdepot.edmonton.ca
+    http:
+      paths:
+        - path: /elasticsearch/?(.*)
+          backend:
+            # specify the ES service name
+            serviceName: textsearch-es-es-http
+            servicePort: 9200
+        - path: /kibana/?(.*)
+          backend:
+            # specify the kibana service name
+            serviceName: textsearch-kibana-kb-http
+            servicePort: 5601
+  tls:
+    # TLS termination configuration
+    # see https://github.com/kubernetes/ingress-nginx/tree/master/docs/examples/tls-termination
+    - hosts:
+      - textdepot.edmonton.ca
+      secretName: production-tls
