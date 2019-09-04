@@ -6,22 +6,6 @@ import sys
 import csv
 csv.field_size_limit(sys.maxsize)
 
-# Creating a tokenizer
-# 'analysis': {
-#     'analyzer': {
-#         'my_ngram_analyzer': {
-#             'tokenizer': 'my_ngram_tokenizer'
-#         }
-#     }
-# },
-# 'tokenizer': {
-#     'my_ngram_tokenizer': {
-#         'type': 'edgeNGram',
-#         'min_gram': '2',
-#         'max_gram': '10'
-#     }
-# }
-
 
 help = """
 This python utility helps with uploading CSV files of any size to Elasticsearch. This has been tested up to ~2GB. Currently, all fields in the document are indexed and treated as text. In the future, controlling how the fields are indexed from the command line would be a handy feature.
