@@ -12,15 +12,13 @@ spec:
         - name: elasticsearch
           env:
           - name: ES_JAVA_OPTS
-            value: -Xms2048M -Xmx2048Mm
+            value: -Xms2g -Xmx2g
           resources:
             requests:
-              memory: 2Gi
-              cpu: 1
+              memory: 4Gi
             limits:
               memory: 4Gi
-              cpu: 2
-  - nodeCount: 4
+    nodeCount: 4
     config:
       node.master: true
       node.data: true
