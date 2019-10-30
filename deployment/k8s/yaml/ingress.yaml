@@ -18,6 +18,9 @@ metadata:
     # Allow any size of document to be uploaded.
     nginx.ingress.kubernetes.io/proxy-body-size: "0"
 
+    # Allow long-waiting response times
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+
     # Restrict access to a range of IP addresses
     # nginx.ingress.kubernetes.io/whitelist-source-range: 10.0.0.0/24,35.26.87.5
 
@@ -36,6 +39,11 @@ spec:
             # specify the kibana service name
             serviceName: textsearch-kibana-kb-http
             servicePort: 5601
+        - path: /apm/?(.*)
+          backend:
+            # specify the kibana service name
+            serviceName: apm-server-apm-http
+            servicePort: 8200
   tls:
     # TLS termination configuration
     # see https://github.com/kubernetes/ingress-nginx/tree/master/docs/examples/tls-termination
