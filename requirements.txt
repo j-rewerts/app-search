@@ -9,7 +9,7 @@ elasticsearch==7.0.4
 idna==2.8
 multidict==4.5.2
 pycodestyle==2.5.0
-PyJWT==1.7.1
+PyJWT==2.4.0
 requests==2.22.0
 swiftype-app-search==0.6.0
 urllib3==1.25.3
